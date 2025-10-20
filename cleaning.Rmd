@@ -1,0 +1,11 @@
+---
+title: "Limpieza y unificación de datos - Efectos del conflicto en el Perú"
+author: "Zarela Palomino"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+library(tidyverse)
+library(readxl)
+library(janitor)
