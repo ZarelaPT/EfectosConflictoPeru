@@ -11,8 +11,3 @@ Repositorio para el Entregable Nº2 (Organización de la base de datos) — Curs
 
 ## Objetivo
 Organizar y documentar la base de datos que permitirá analizar la relación entre la intensidad del conflicto armado interno (1980–2000) y niveles posteriores de pobreza monetaria a nivel departamental.
-
-## Estado
-- [x] Repositorio creado
-- [ ] cleaning.Rmd pendiente
-- [ ] data/ pendiente
