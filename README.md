@@ -67,53 +67,11 @@ Se realizó:
 
 ---
 
-## 📘 Diccionario de Datos (base_unificada.csv)
-
-La base contiene las siguientes variables:
-
-| Variable              | Descripción                                                                 |
-|-----------------------|-----------------------------------------------------------------------------|
-| departamentos         | Nombre del departamento en minúsculas                                       |
-| total_1993            | Población total según Censo 1993                                            |
-| urbana_1993           | Población urbana 1993                                                       |
-| rural_1993            | Población rural 1993                                                        |
-| total_2017            | Población total según Censo 2017                                            |
-| urbana_2017           | Población urbana 2017                                                       |
-| rural_2017            | Población rural 2017                                                        |
-| rural_prop_1993       | Proporción de población rural en 1993 (rural_1993 / total_1993)            |
-| rural_prop_2017       | Proporción de población rural en 2017 (rural_2017 / total_2017)            |
-| disminucion_rural     | Cambio proporcional de población rural entre 1993 y 2017                   |
-| intervenciones_CVR    | Número de intervenciones armadas registradas en ACTOS_DEST                 |
-| victimas_CVR          | Número de personas afectadas según MUE_DES_EST                             |
-
----
-
-# 📊 **Variables finales incluidas**
-
-| Variable | Descripción |
-|---------|-------------|
-| **departamentos** | Nombre del departamento (minúsculas) |
-| **total_1993** | Población total 1993 |
-| **urbana_1993** | Población urbana 1993 |
-| **rural_1993** | Población rural 1993 |
-| **total_2017** | Población total 2017 |
-| **urbana_2017** | Población urbana 2017 |
-| **rural_2017** | Población rural 2017 |
-| **disminucion_rural** | Variación porcentual de la población rural 1993–2017 |
-| **intervenciones_CVR** | Número de intervenciones registradas por el CVR |
-| **victimas_CVR** | Número de víctimas declaradas al CVR |
-| **rural_prop_1993** | Proporción de ruralidad 1993 |
-| **rural_prop_2017** | Proporción de ruralidad 2017 |
-
----
-
 # 🧩 **Diccionario de datos (formal)**
 
-Aquí te dejo el diccionario listo con formato académico para que lo pegues en el README:
-
----
-
 ### **Diccionario de datos – Base unificada**
+
+Esta base de datos contiene las siguientes variables:
 
 | Variable | Tipo | Fuente | Definición |
 |---------|------|---------|------------|
