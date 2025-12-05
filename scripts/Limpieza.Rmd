@@ -1,0 +1,180 @@
+---
+title: "Limpieza y Construcción de la Base Unificada"
+author: "Zarela Palomino"
+output: 
+  rmdformats::readthedown:
+    highlight: espresso
+---
+
+# 1. LIMPIEZA DE DATOS  
+
+## 1. Librerías 
+```{r}
+library(readxl)
+library(dplyr)
+library(stringr)
+library(janitor)
+library(purrr)
+library(readr)
+library(haven)
+```
+
+# 2. DATA CENSOS 1993 Y 2017
+
+## 2.1 Cargar y estandarizar nombres
+
+```{r}
+censos = read_excel("Data_descargada/Censo 1993 - departamentos urbano y rural.xlsx") %>%
+clean_names() %>%
+mutate(departamentos = tolower(departamentos))
+```
+
+## 2.2 Convertir a númerico
+```{r}
+censos <- censos %>%
+  mutate(across(
+    .cols = c(total_1993, urbana_1993, rural_1993, total_2017, urbana_2017, rural_2017),
+    .fns = ~ as.numeric(str_replace_all(., "[^0-9.]", ""))
+  ))
+```
+
+## 2.3 Calcular disminución porcentual de ruralidad
+```{r}
+censos = censos %>%
+  mutate(
+    disminucion_rural = (rural_2017 - rural_1993) / rural_1993 * 100
+  )
+```
+
+## 2.4 Filtrar solo los 6 departamentos del estudio
+
+```{r}
+departamentos_seleccionados = c(
+  "ayacucho", "huancavelica", "apurímac",
+  "lima", "piura", "lambayeque"
+)
+
+censos = censos %>%
+  filter(departamentos %in% departamentos_seleccionados)
+```
+
+# 3. DATA MUE_DES_EST - Víctimas CVR
+
+## 3.1 Cargar base
+
+```{r}
+mue = read_sav("Data_descargada/mue_des_est.sav")
+```
+
+## 3.2 Mantener solo variables necesarias
+
+```{r}
+mue = mue %>%
+  select(DEPHEC, IDPERSON)
+```
+
+## 3.3 Convertir etiquetas de SPSS a caracteres 
+
+```{r}
+mue = mue %>%
+  mutate(DEPHEC = as.character(as_factor(DEPHEC)))
+```
+
+## 3.4 Filtrar 6 departamentos
+
+```{r}
+deps_analisis = c("APURÍMAC", "AYACUCHO", "HUANCAVELICA",
+                   "LAMBAYEQUE", "LIMA", "PIURA")
+
+mue = mue %>%
+  filter(DEPHEC %in% deps_analisis)
+```
+
+## 3.5 Contar víctimas por departamento
+```{r}
+victimas_CVR = mue %>%
+  count(DEPHEC, name = "victimas_CVR") %>%
+  rename(departamentos = DEPHEC) %>% 
+  mutate(departamentos = tolower(departamentos))
+```
+
+# 4. DATA ACTOS_EST - Intervenciones CVR
+
+## 4.1 Cargar Base
+
+```{r}
+actos = read_sav("Data_descargada/actos_est.sav")
+```
+
+## 4.2 Mantener solo variables necesarias 
+```{r}
+actos = actos %>%
+  select(UBIDEP, IDPERSON)
+```
+
+## 4.3 Convertir etiquetas SPSS a texto
+```{r}
+actos = actos %>%
+  mutate(UBIDEP = as.character(as_factor(UBIDEP)))
+```
+
+## 4.4 Filtrar 6 departamentos
+```{r}
+deps_CVR = c("APURÍMAC", "AYACUCHO", "HUANCAVELICA",
+               "LAMBAYEQUE", "LIMA", "PIURA")
+
+actos = actos %>%
+  filter(UBIDEP %in% deps_CVR)
+```
+
+## 4.5 Estandarizar nombres de departamentos
+```{r}
+actos = actos %>%
+  mutate(departamentos = case_when(
+    UBIDEP == "APURÍMAC"     ~ "apurímac",
+    UBIDEP == "AYACUCHO"     ~ "ayacucho",
+    UBIDEP == "HUANCAVELICA" ~ "huancavelica",
+    UBIDEP == "LAMBAYEQUE"   ~ "lambayeque",
+    UBIDEP == "LIMA"         ~ "lima",
+    UBIDEP == "PIURA"        ~ "piura"
+  ))
+```
+
+## 4.6 Contar intervenciones cvr
+```{r}
+intervenciones_cvr = actos %>%
+  group_by(departamentos) %>%
+  summarise(intervenciones_cvr = n())
+```
+
+# 5. Guardar bases limpias
+```{r}
+write.csv(censos, "data/censos.csv", row.names = FALSE, fileEncoding = "UTF-8")
+write.csv(intervenciones_cvr, "data/intervenciones_CVR.csv", row.names = FALSE, fileEncoding = "UTF-8")
+write.csv(victimas_CVR, "data/victimas_CVR.csv", row.names = FALSE, fileEncoding = "UTF-8")
+```
+
+# 6. Unificación de bases
+
+```{r}
+base_unificada = censos %>%
+  left_join(intervenciones_cvr, by = "departamentos") %>%
+  left_join(victimas_CVR, by = "departamentos")
+```
+
+## 6.1 Variables finales
+```{r}
+base_unificada <- base_unificada %>%
+  mutate(
+    rural_prop_1993 = rural_1993 / total_1993,
+    rural_prop_2017 = rural_2017 / total_2017
+  )
+```
+
+## 6.2 Guardado final
+```{r}
+write.csv(base_unificada, "data/base_unificada.csv", row.names = FALSE)
+```
+
+
+
