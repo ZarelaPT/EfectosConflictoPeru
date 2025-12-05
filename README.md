@@ -35,6 +35,38 @@ Estos indicadores permiten construir medidas comparables de ruralidad y conflict
 
 ---
 
+## 📂 **Estructura del repositorio** 
+
+EfectosConflictoPeru/
+│
+├── README.md
+├── .gitignore
+│
+├── data/
+│   ├── censos.csv
+│   ├── intervenciones_CVR.csv
+│   ├── victimas_CVR.csv
+│   └── base_unificada.csv
+│
+├── scripts/
+│   └── limpieza.Rmd
+
+---
+
+## 🧹 **Proceso de limpieza**
+
+Se realizó:
+
+- Estandarización de nombres (`clean_names()`)
+- Conversión de strings numéricos a números
+- Filtrado de 6 departamentos relevantes
+- Conversión de etiquetas SPSS
+- Conteo de víctimas (mue_des_est)  
+- Conteo de intervenciones (actos_est)
+- Unión final de las 3 bases
+
+---
+
 ## 📘 Diccionario de Datos (base_unificada.csv)
 
 La base contiene las siguientes variables:
@@ -53,6 +85,50 @@ La base contiene las siguientes variables:
 | disminucion_rural     | Cambio proporcional de población rural entre 1993 y 2017                   |
 | intervenciones_CVR    | Número de intervenciones armadas registradas en ACTOS_DEST                 |
 | victimas_CVR          | Número de personas afectadas según MUE_DES_EST                             |
+
+---
+
+# 📊 **Variables finales incluidas**
+
+| Variable | Descripción |
+|---------|-------------|
+| **departamentos** | Nombre del departamento (minúsculas) |
+| **total_1993** | Población total 1993 |
+| **urbana_1993** | Población urbana 1993 |
+| **rural_1993** | Población rural 1993 |
+| **total_2017** | Población total 2017 |
+| **urbana_2017** | Población urbana 2017 |
+| **rural_2017** | Población rural 2017 |
+| **disminucion_rural** | Variación porcentual de la población rural 1993–2017 |
+| **intervenciones_CVR** | Número de intervenciones registradas por el CVR |
+| **victimas_CVR** | Número de víctimas declaradas al CVR |
+| **rural_prop_1993** | Proporción de ruralidad 1993 |
+| **rural_prop_2017** | Proporción de ruralidad 2017 |
+
+---
+
+# 🧩 **Diccionario de datos (formal)**
+
+Aquí te dejo el diccionario listo con formato académico para que lo pegues en el README:
+
+---
+
+### **Diccionario de datos – Base unificada**
+
+| Variable | Tipo | Fuente | Definición |
+|---------|------|---------|------------|
+| **departamentos** | Factor | Censos / CVR | Departamento del Perú incluido en el análisis. |
+| **total_1993** | Numérico | INEI Censo 1993 | Población total registrada en el censo 1993. |
+| **urbana_1993** | Numérico | INEI Censo 1993 | Población urbana 1993. |
+| **rural_1993** | Numérico | INEI Censo 1993 | Población rural 1993. |
+| **total_2017** | Numérico | INEI Censo 2017 | Población total registrada en 2017. |
+| **urbana_2017** | Numérico | INEI Censo 2017 | Población urbana 2017. |
+| **rural_2017** | Numérico | INEI Censo 2017 | Población rural 2017. |
+| **disminucion_rural** | Numérico | Elaboración propia | Variación porcentual de población rural entre 1993 y 2017. |
+| **intervenciones_CVR** | Numérico | CVR – ACTOS_EST | Número de eventos del conflicto en cada departamento. |
+| **victimas_CVR** | Numérico | CVR – MUE_DES_EST | Número total de víctimas declaradas al CVR. |
+| **rural_prop_1993** | Numérico | Elaboración propia | Proporción rural 1993 = rural_1993 / total_1993. |
+| **rural_prop_2017** | Numérico | Elaboración propia | Proporción rural 2017 = rural_2017 / total_2017. |
 
 ---
 
