@@ -37,14 +37,23 @@ Estos indicadores permiten construir medidas comparables de ruralidad y conflict
 
 ## 📁 Estructura del repositorio
 ├── data/
+
 │ ├── base_unificada.csv
+
 │ ├── censos.csv
+
 │ ├── intervenciones_CVR.csv
+
 │ ├── victimas_CVR.csv
+
 │
+
 ├── scripts/
+
 │ └── limpieza.Rmd # Proceso completo de limpieza
+
 │
+
 └── README.md # Este archivo
 
 
