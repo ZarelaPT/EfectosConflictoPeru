@@ -36,4 +36,54 @@ Estos indicadores permiten construir medidas comparables de ruralidad y conflict
 ---
 
 ## 📁 Estructura del repositorio
+├── data/
+│ ├── base_unificada.csv
+│ ├── censos.csv
+│ ├── intervenciones_CVR.csv
+│ ├── victimas_CVR.csv
+│
+├── scripts/
+│ └── limpieza.Rmd # Proceso completo de limpieza
+│
+└── README.md # Este archivo
+
+
+---
+
+## 📘 Diccionario de Datos (base_unificada.csv)
+
+La base contiene las siguientes variables:
+
+| Variable              | Descripción                                                                 |
+|-----------------------|-----------------------------------------------------------------------------|
+| departamentos         | Nombre del departamento en minúsculas                                       |
+| total_1993            | Población total según Censo 1993                                            |
+| urbana_1993           | Población urbana 1993                                                       |
+| rural_1993            | Población rural 1993                                                        |
+| total_2017            | Población total según Censo 2017                                            |
+| urbana_2017           | Población urbana 2017                                                       |
+| rural_2017            | Población rural 2017                                                        |
+| rural_prop_1993       | Proporción de población rural en 1993 (rural_1993 / total_1993)            |
+| rural_prop_2017       | Proporción de población rural en 2017 (rural_2017 / total_2017)            |
+| disminucion_rural     | Cambio proporcional de población rural entre 1993 y 2017                   |
+| intervenciones_CVR    | Número de intervenciones armadas registradas en ACTOS_DEST                 |
+| victimas_CVR          | Número de personas afectadas según MUE_DES_EST                             |
+
+---
+
+## 🔧 Reproducibilidad
+
+Para reproducir el proceso completo de limpieza:
+
+1. Abrir el archivo `scripts/limpieza.Rmd`.  
+2. Ejecutar los chunks en orden.  
+3. Las tres bases limpias se generan automáticamente:  
+   - censos  
+   - intervenciones_CVR  
+   - victimas_CVR  
+4. Finalmente, se construye `data/base_unificada.csv`.
+
+
+
+
 
