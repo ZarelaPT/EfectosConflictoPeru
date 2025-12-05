@@ -1,0 +1,241 @@
+---
+title: "01_analisis_preliminar"
+author: "Zarela Palomino"
+output: 
+  rmdformats::readthedown:
+    highlight: espresso
+---
+
+# Introducción
+
+El objetivo de este análisis es evaluar la relación entre:
+
+- la intensidad del conflicto armado interno (CVR)
+- la disminución de la población rural entre 1993 y 2017
+
+utilizando datos censales del INEI y datos del conflicto provenientes del CVR.
+
+# 0. Paquetes
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(broom)
+library(stringr)
+```
+
+# 1. Leer base desde GitHub (raw)
+La base se lee directamente desde el repositorio de GitHub para asegurar reproducibilidad.
+```{r}
+base_unificada = "https://raw.githubusercontent.com/ZarelaPT/EfectosConflictoPeru/main/data/base_unificada.csv"
+
+datos = read_csv(base_unificada, show_col_types = FALSE) %>%
+  mutate(
+    departamentos = str_to_title(departamentos)
+  )
+
+glimpse(datos)
+```
+
+
+# 2. ESTADISTICA DECRIPTIVA 
+
+A continuación se describen las variables principales:
+
+- disminucion_rural: variación porcentual de la población rural 1993–2017
+- intervenciones_CVR: número de intervenciones armadas registradas
+- victimas_CVR: número de víctimas registradas
+
+## VARIABLE CENTRAL: DISMINUCIÓN DE RURALIDAD
+
+## 2.1 Resumen numérico
+```{r}
+resumen_disminucion = datos %>%
+  summarise(
+    min     = min(disminucion_rural, na.rm = TRUE),
+    q1      = quantile(disminucion_rural, 0.25, na.rm = TRUE),
+    mediana = median(disminucion_rural, na.rm = TRUE),
+    mean    = mean(disminucion_rural, na.rm = TRUE),
+    q3      = quantile(disminucion_rural, 0.75, na.rm = TRUE),
+    max     = max(disminucion_rural, na.rm = TRUE)
+  )
+
+library(kableExtra)
+
+resumen_disminucion %>%
+  kbl(caption = "Resumen de la disminución rural") %>%
+  kable_classic(full_width = FALSE, html_font = "Arial")
+
+```
+
+## 2.2 Gráfico: disminución rural por departamento
+```{r}
+ggplot(datos, aes(x = reorder(departamentos, disminucion_rural),
+y = disminucion_rural)) +
+geom_col(fill = "#b2182b") +
+coord_flip() +
+labs(title = "Disminución de la población rural (1993–2017)",
+x = "Departamento",
+y = "Cambio porcentual") +
+theme_minimal()
+```
+
+## 2.3 Gráfico: Comparación ruralidad 1993 vs 2017
+```{r}
+library(tidyr)
+
+long_rural <- datos %>%
+  select(departamentos, rural_prop_1993, rural_prop_2017) %>%
+  pivot_longer(cols = starts_with("rural_prop"))
+
+ggplot(long_rural,
+       aes(x = departamentos, y = value, fill = name)) +
+  geom_col(position = "dodge") +
+  labs(title = "Comparación de proporción rural 1993 vs 2017",
+       y = "Proporción rural")
+```
+
+
+# 3. MODELOS DE ASOCIACIÓN / CORRELACIÓN
+
+## 3.1 Matriz de correlaciones
+
+```{r}
+matriz_cor = datos %>%
+  select(disminucion_rural, intervenciones_cvr, victimas_CVR) %>%
+  cor(use = "complete.obs") %>%
+  round(3)
+
+matriz_cor %>%
+  kbl(caption = "Matriz de correlación") %>%
+  kable_paper(full_width = FALSE) %>%
+  column_spec(1) %>%
+  kableExtra::row_spec(0, bold = TRUE) %>%
+  kableExtra::kable_styling() %>%
+  kableExtra::add_header_above(c(" " = 1, "Correlación" = 3)) %>%
+  kableExtra::row_spec(1:nrow(matriz_cor), background = spec_color(matriz_cor))
+```
+
+## 3.2 Correlaciones individuales con tests
+
+```{r}
+cor_int <- cor.test(datos$disminucion_rural, datos$intervenciones_cvr)
+cor_vic <- cor.test(datos$disminucion_rural, datos$victimas_CVR)
+
+print(cor_int)
+```
+
+```{r}
+print(cor_vic)
+```
+
+
+## 3.3 Gráficos de dispersión
+
+```{r}
+ggplot(datos,
+aes(x = intervenciones_cvr,
+y = disminucion_rural,
+label = departamentos)) +
+geom_point(size = 3, color = "#2166ac") +
+geom_smooth(method = "lm", se = FALSE, linetype = "dashed") +
+geom_text(vjust = -0.7) +
+labs(title = "Intervenciones armadas y disminución rural",
+x = "Intervenciones (CVR)",
+y = "Disminución rural (%)") +
+theme_minimal()
+```
+
+```{r}
+ggplot(datos,
+aes(x = victimas_CVR,
+y = disminucion_rural,
+label = departamentos)) +
+geom_point(size = 3, color = "#542788") +
+geom_smooth(method = "lm", se = FALSE, linetype = "dashed") +
+geom_text(vjust = -0.7) +
+labs(title = "Víctimas del conflicto y disminución rural",
+x = "Víctimas (CVR)",
+y = "Disminución rural (%)") +
+theme_minimal()
+```
+
+# 4. MODELOS DE REGRESIÓN (LINEAL GAUSSIANA)
+
+## 4.1 Modelos simples
+
+```{r}
+modelo1 = lm(disminucion_rural ~ intervenciones_cvr, data = datos)
+summary(modelo1)
+```
+
+```{r}
+modelo2 = lm(disminucion_rural ~ victimas_CVR, data = datos)
+summary(modelo2)
+```
+## 4.2 Modelo principal: regresión múltiple
+
+```{r}
+modelo3 = lm(disminucion_rural ~ intervenciones_cvr + victimas_CVR,
+data = datos)
+summary(modelo3)
+```
+# Tabla ordenada para el informe/dashboard
+```{r}
+modelo_tabla = tidy(modelo3) %>%
+  mutate(
+    estimate  = round(estimate, 4),
+    std.error = round(std.error, 4),
+    statistic = round(statistic, 3),
+    p.value   = round(p.value, 3)
+  )
+
+modelo_tabla %>%
+  kbl(caption = "Resultados del modelo", digits = 4) %>%
+  kable_paper("hover", full_width = FALSE) %>%
+  kable_styling()
+```
+
+# 5. CLUSTERIZACIÓN (k-means, k = 2)
+
+```{r}
+set.seed(123)
+
+cluster_input <- datos %>%
+select(disminucion_rural, intervenciones_cvr, victimas_CVR) %>%
+scale()
+
+k2 <- kmeans(cluster_input, centers = 2, nstart = 20)
+
+datos_clusters = datos %>%
+mutate(cluster = factor(k2$cluster))
+
+
+datos_clusters %>%
+  kbl(caption = "Datos con clusters asignados") %>%
+  kable_styling(
+    bootstrap_options = c("striped", "hover", "bordered"),
+    full_width = FALSE
+  )
+```
+
+```{r}
+ggplot(datos_clusters,
+aes(x = intervenciones_cvr,
+y = victimas_CVR,
+color = cluster,
+label = departamentos)) +
+geom_point(size = 3) +
+geom_text(vjust = -0.7, show.legend = FALSE) +
+labs(title = "Clusters según intensidad del conflicto",
+x = "Intervenciones (CVR)",
+y = "Víctimas (CVR)",
+color = "Cluster") +
+theme_minimal()
+```
+
+
+
+
+
