@@ -1,7 +1,7 @@
 # EfectosConflictoPeru
 Proyecto final - Estadística para el análisis político 2 (PUCP)
 
-🔗 Link del dashboard (GitHub Pages): https://zarelapt.github.io/EfectosConflictoPeru/  
+🔗 Link del dashboard (GitHub Pages):  https://zarelapt.github.io/EfectosConflictoPeru/
 
 
 
