@@ -1,6 +1,8 @@
 # EfectosConflictoPeru
 Proyecto final - Estadística para el análisis político 2 (PUCP)
 
+LINK DASHBOARD: https://zarelapt.github.io/EfectosConflictoPeru/ 
+
 # Impacto del Conflicto Armado en la Disminución de la Población Rural (1993–2017)
 
 Este repositorio contiene la base de datos unificada y el script de limpieza utilizados para analizar la relación entre la intensidad del conflicto armado interno y la disminución de la población rural en seis departamentos del Perú entre 1993 y 2017.
