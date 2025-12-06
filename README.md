@@ -1,6 +1,10 @@
 # EfectosConflictoPeru
 Proyecto final - Estadística para el análisis político 2 (PUCP)
 
+🌐 Dashboard interactivo
+🔗 Link del dashboard (GitHub Pages): https://zarelapt.github.io/EfectosConflictoPeru/  
+
+Este dashboard fue construido en RMarkdown (flexdashboard) y se publica utilizando GitHub Pages, cumpliendo el requisito del curso para la entrega del proyecto final.
 LINK DASHBOARD: https://zarelapt.github.io/EfectosConflictoPeru/ 
 
 # Impacto del Conflicto Armado en la Disminución de la Población Rural (1993–2017)
